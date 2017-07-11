@@ -42,8 +42,8 @@ Note: there is no need to use the `certmonger` class, it gets included by the de
 * `presavecmd`  (optional; String) - Command certmonger should run before saving the certificate
 * `postsavecmd` (optional; String) - Command certmonger should run after saving the certificate
 * `profile`     (optional; String) - Ask the CA to process request using the named profile. e.g. `caIPAserviceCert`
-* `issuer`      (optional; String) - Ask the CA to process the request using the named issuer.
-* `issuerdn`    (optional; String) - If a specific issuer is needed, provide the issuer DN
+* `issuer`      (optional; String) - Ask the CA to process the request using the named issuer. e.g. `ca-puppet`
+* `issuerdn`    (optional; String) - If a specific issuer is needed, provide the issuer DN. e.g. `CN=Puppet CA`
 
 ### Actions:
 * Submits a certificate request to an IPA server for a new certificate via `ipa-getcert` utility
