@@ -1,6 +1,6 @@
 #!/bin/bash
 
-while getopts ":f:k:N:K:D:u:U:B:C:w:" opt; do
+while getopts ":f:k:N:K:D:u:U:X:B:C:w:" opt; do
   case "$opt" in
     f) certfile="$OPTARG"
        ;;
@@ -15,6 +15,8 @@ while getopts ":f:k:N:K:D:u:U:B:C:w:" opt; do
     u) usage="$OPTARG"
        ;;
     U) eku="$OPTARG"
+       ;;
+    X) issuer="$OPTARG"
        ;;
     B) presavecmd="$OPTARG"
        ;;
@@ -159,4 +161,15 @@ if echo "$output" | grep -q '\s*eku:' && [ -n "$eku" ]; then
 
 elif [ -n "$eku" ]; then
   exit 9
+fi                                                                                     
+                                                                                       
+# Is the expected issuer the same as whats already in the certrequest?                 
+if echo "$output" | grep -q '^\s*issuer:' && [ -n "$issuer" ]; then                    
+  # take output of ipa-getcert list | grep issuer: | strip off the 'issuer:' part      
+  output_issuer="$(echo "$output" | grep '^\s*issuer:' | sed -e 's/^\s*issuer:\s*//g')"
+  if [ "$output_issuer" != "$issuer" ]; then                                           
+    exit 10                                                                            
+  fi                                                                                   
+elif [ -n "$issuer" ]; then                                                            
+  exit 10                                                                              
 fi

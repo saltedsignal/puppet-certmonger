@@ -1,13 +1,11 @@
-[![Puppet
-Forge](http://img.shields.io/puppetforge/v/saltedsignal/certmonger.svg)](https://forge.puppetlabs.com/saltedsignal/certmonger)
+[![Puppet Forge](http://img.shields.io/puppetforge/v/saltedsignal/certmonger.svg)](https://forge.puppetlabs.com/saltedsignal/certmonger)
 [![Build Status](https://travis-ci.org/saltedsignal/puppet-certmonger.svg?branch=master)](https://travis-ci.org/saltedsignal/puppet-certmonger)
 
 # Certmonger puppet module
 
-This puppet modules enable some resources and providers that you can use to
-request certificates using certmonger.
+This puppet module allows you to request and manage certificates using certmonger.
 
-## Request a certificate from IPA using a puppet define
+## Request a certificate from IPA using the defined type
 
 ### Simple usage:
 
@@ -44,7 +42,8 @@ Note: there is no need to use the `certmonger` class, it gets included by the de
 * `presavecmd`  (optional; String) - Command certmonger should run before saving the certificate
 * `postsavecmd` (optional; String) - Command certmonger should run after saving the certificate
 * `profile`     (optional; String) - Ask the CA to process request using the named profile. e.g. `caIPAserviceCert`
-
+* `issuer`      (optional; String) - Ask the CA to process the request using the named issuer.
+* `issuerdn`    (optional; String) - If a specific issuer is needed, provide the issuer DN
 
 ### Actions:
 * Submits a certificate request to an IPA server for a new certificate via `ipa-getcert` utility
@@ -56,6 +55,7 @@ Note: there is no need to use the `certmonger` class, it gets included by the de
 
 ### Fixing file/folder permissions after certificate issuance
 A notable limitation of `ipa-getcert` is that the `postsavecmd` can only take a single command. This means changing file ownership/modes and restarting services requires the use of a separate helper utility. This module includes a creatively named script called `change-perms-restart`, which gets installed by the `certmonger` class as `/usr/local/bin/change-perms-restart`. Usage is as follows:
+
 ```
 /usr/local/bin/change-perms-restart [ -R] [ -r 'service1 service2' ] [ -t 'service3 service4' ] [ -s facility.severity ] owner:group:modes:/path/to/file [ ... ]
 
@@ -64,14 +64,16 @@ A notable limitation of `ipa-getcert` is that the `postsavecmd` can only take a 
    -t     space separated list of services to restart via systemctl
    -s     log output (if any) to syslog with specified facility/severity
 ```
+
 For example: `change-perms-restart -R -s daemon.notice  -r 'httpd rsyslog' -t 'postfix postgresql' root:pkiuser:0644:/etc/pki/tls/certs/localhost.crt root:pkiuser:0600:/etc/pki/tls/private/localhost.key`
 
 ### Other limitations:
 * The current state is determined by calling a custom shell script (supplied). Not ideal, I know.
 * Only supports file-based certificates (i.e. no support for NSSDB).
 * Does not manage the nickname, IP address, email, etc features.
-* Only manages subject, dns (subjectAltNames), key usage, eku, principal, pre/post save commands.
+* Only manages subject, dns (subjectAltNames), key usage, eku, principal, issuer, pre/post save commands.
 * Only manages the principal if it appears in the issued certificate - which depends on your CA profile.
+* Once a certificate is issued, this module can't manage the profile because it doesn't appear in the issued certificate.
 * Subject is hardcoded to `CN=$hostname`.
 * Only works if being run on a system already joined to an IPA domain, and only works against IPA CAs.
 * If you specify a hostname and don't specify a principal, this module will assume you want `host/$hostname`.
@@ -90,7 +92,7 @@ For example: `change-perms-restart -R -s daemon.notice  -r 'httpd rsyslog' -t 'p
 
 ```puppet
   certmonger::request_ipa_cert {'webserver-certificate':
-     server      => "${fqdn}",
+     hostname    => "${fqdn}",
      principal   => "HTTP/${fqdn}",
      keyfile     => "/etc/pki/tls/private/server.key",
      certfile    => "/etc/pki/tls/certs/server.crt",
@@ -99,7 +101,7 @@ For example: `change-perms-restart -R -s daemon.notice  -r 'httpd rsyslog' -t 'p
   }
 ```
 
-## Request a certificate from IPA using the certmonger provider
+## Request a certificate using the native type/provider
 
 This will create a certificate request with the given hostname (which will be
 used in the subject as the CN) and the given principal. It will use the key
@@ -145,6 +147,10 @@ errors can be ignored with the 'ignore_ca_errors' parameter.
 One can also automatically stop tracking the certificate request if it's
 rejected by the CA. This is done by setting the 'cleanup_on_error' flag.
 
+### Limitations
+* The native type/provider isn't as mature as the defined type, which means its parameters/properties are likely change in a non-backward compatible way.
+* The defined type is very mature - its parameters are unlikely to change, and if they do, those changes will be backward-compatible.
+* If you're using IPA and are having trouble with the native type/provider, try switching to the defined type.
 
 ## Contributing
 * Fork it
@@ -153,7 +159,10 @@ rejected by the CA. This is done by setting the 'cleanup_on_error' flag.
 * Submit a PR
 
 ## Acknowledgements
-Honorable mention goes out to:
+
+This module is brought to you by [Salted Signal](https://www.saltedsignal.com.au) - a Melbourne-based cloud automation, security and compliance company.
+
+Honorable mentions go out to:
 * Rob Crittenden for his work on https://github.com/rcritten/puppet-certmonger, which was used as inspiration for this module.
 * Juan Antonio Osorio for his work on the certmonger type/provider and setting up rpsec tests/travis-ci integration.
 * Alex J Fisher for fixing rubocop violations

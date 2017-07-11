@@ -25,6 +25,8 @@
 # * `presavecmd`  (optional; String) - Command certmonger should run before saving the certificate
 # * `postsavecmd` (optional; String) - Command certmonger should run after saving the certificate
 # * `profile`     (optional; String) - Ask the CA to process request using the named profile. e.g. `caIPAserviceCert`
+# * `issuer`      (optional; String) - Ask the CA to process the request using the named issuer. e.g. `ca-puppet`
+# * `issuerdn`    (optional; String) - If a specific issuer is needed, provide the issuer DN. e.g. `CN=Puppet CA`
 #
 define certmonger::request_ipa_cert (
   $certfile,
@@ -37,6 +39,8 @@ define certmonger::request_ipa_cert (
   $presavecmd  = undef,
   $postsavecmd = undef,
   $profile     = undef,
+  $issuer      = undef,
+  $issuerdn    = undef,
 ) {
   include ::certmonger
   include ::certmonger::scripts
@@ -121,13 +125,27 @@ define certmonger::request_ipa_cert (
   if $presavecmd { $options_presavecmd = "-B '${presavecmd}'" } else { $options_presavecmd = '' }
   if $postsavecmd { $options_postsavecmd = "-C '${postsavecmd}'" } else { $options_postsavecmd = '' }
   if $profile { $options_profile = "-T '${profile}'" } else { $options_profile = '' }
+  if $issuer {
+    $options_issuer = "-X '${issuer}'"
+    if $issuerdn {
+      $options_issuerdn = "-X '${issuerdn}'"
+    } else {
+      fail('certmonger::request_ipa_cert: issuerdn is required if issuer is specified.')
+    }
+  } else {
+    $options_issuer = ''
+    $options_issuerdn = ''
+  }
+
+  $request_attrib_options = "${options_subject} ${options_principal} ${options_dns} \
+    ${options_usage} ${options_eku} ${options_issuer} ${options_profile} ${options_presavecmd} ${options_postsavecmd}"
+  $verify_attrib_options = "${options_subject} ${options_principal} ${options_dns_csv} \
+    ${options_usage_csv} ${options_eku_csv} ${options_issuerdn} ${options_presavecmd} ${options_postsavecmd}"
 
   exec { "ipa-getcert-${certfile}-trigger":
     path    => '/usr/bin:/bin',
     command => '/bin/true',
-    unless  => "${::certmonger::scripts::verifyscript} ${options} ${options_subject} ${options_principal} \
-                ${options_dns_csv} ${options_usage_csv} ${options_eku_csv} \
-                ${options_presavecmd} ${options_postsavecmd}",
+    unless  => "${::certmonger::scripts::verifyscript} ${options} ${verify_attrib_options}",
     onlyif  => '/usr/bin/test -s /etc/ipa/default.conf',
     require => [Service['certmonger'], File[$::certmonger::scripts::verifyscript]],
     notify  => [Exec["ipa-getcert-request-${certfile}"],Exec["ipa-getcert-resubmit-${certfile}"]],
@@ -139,9 +157,7 @@ define certmonger::request_ipa_cert (
     provider    => 'shell',
     command     => "rm -rf ${keyfile} ${certfile} ; mkdir -p `dirname ${keyfile}` `dirname ${certfile}` ;
                     ipa-getcert stop-tracking ${options_certfile} ;
-                    ipa-getcert request ${options} ${options_subject} ${options_principal} \
-                    ${options_dns} ${options_usage} ${options_eku} \
-                    ${options_presavecmd} ${options_postsavecmd} ${options_profile}",
+                    ipa-getcert request ${options} ${request_attrib_options}",
     unless      => "${::certmonger::scripts::verifyscript} ${options}",
     notify      => Exec["ipa-getcert-${certfile}-verify"],
     require     => [Service['certmonger'],File[$::certmonger::scripts::verifyscript]],
@@ -151,12 +167,8 @@ define certmonger::request_ipa_cert (
     refreshonly => true,
     path        => '/usr/bin:/bin',
     provider    => 'shell',
-    command     => "ipa-getcert resubmit ${options_certfile} ${options_subject} ${options_principal} \
-                    ${options_dns} ${options_usage} ${options_eku} \
-                    ${options_presavecmd} ${options_postsavecmd} ${options_profile}",
-    unless      => "${::certmonger::scripts::verifyscript} ${options_certfile} ${options_subject} ${options_principal} \
-                    ${options_dns_csv} ${options_usage_csv} ${options_eku_csv} \
-                    ${options_presavecmd} ${options_postsavecmd}",
+    command     => "ipa-getcert resubmit ${options_certfile} ${request_attrib_options}",
+    unless      => "${::certmonger::scripts::verifyscript} ${options_certfile} ${verify_attrib_options}",
     onlyif      => ["${::certmonger::scripts::verifyscript} ${options}","openssl x509 -in ${certfile} -noout"],
     notify      => Exec["ipa-getcert-${certfile}-verify"],
     require     => [Service['certmonger'], File[$::certmonger::scripts::verifyscript]],
@@ -165,9 +177,7 @@ define certmonger::request_ipa_cert (
   exec {"ipa-getcert-${certfile}-verify":
     refreshonly => true,
     path        => '/usr/bin:/bin',
-    command     => "${::certmonger::scripts::verifyscript} ${options} ${options_subject} ${options_principal} -w 8 \
-                    ${options_dns_csv} ${options_usage_csv} ${options_eku_csv} \
-                    ${options_presavecmd} ${options_postsavecmd}",
+    command     => "${::certmonger::scripts::verifyscript} -w 8 ${options} ${verify_attrib_options}",
     require     => [Service['certmonger'],File[$::certmonger::scripts::verifyscript]],
   }
 
