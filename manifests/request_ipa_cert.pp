@@ -28,6 +28,7 @@
 # * `profile`     (optional; String) - Ask the CA to process request using the named profile. e.g. `caIPAserviceCert`
 # * `issuer`      (optional; String) - Ask the CA to process the request using the named issuer. e.g. `ca-puppet`
 # * `issuerdn`    (optional; String) - If a specific issuer is needed, provide the issuer DN. e.g. `CN=Puppet CA`
+# * `keysize`     (optional; String) - Optional parameter to set the keysize to 4096 to match certmonger template that requires a keysize of 4096. e.g. `4096`
 #
 define certmonger::request_ipa_cert (
   $certfile,
@@ -43,6 +44,7 @@ define certmonger::request_ipa_cert (
   $profile     = undef,
   $issuer      = undef,
   $issuerdn    = undef,
+  $keysize     = undef,
 ) {
   include ::certmonger
   include ::certmonger::scripts
@@ -143,6 +145,26 @@ define certmonger::request_ipa_cert (
   } else {
     $options_issuer = ''
     $options_issuerdn = ''
+  }
+  
+ if $keysize {
+    if $keysize == "2048" { 
+    
+      $options_keysize = "-g ${keysize}"
+    
+    }
+    
+    elsif $keysize == "4096" { 
+
+      $options_keysize = "-g ${keysize}" 
+
+    }
+    
+    else { 
+
+      $options_keysize = '' 
+
+    }
   }
 
   $request_attrib_options = "${options_keysize} ${options_subject} ${options_principal} ${options_dns} \
