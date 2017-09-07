@@ -76,6 +76,9 @@ Puppet::Type.type(:certmonger_certificate).provide :certmonger_certificate do
         when %r{^\s+dns: .*}
           dns_raw = line.match(%r{dns: (.*)})[1]
           current_cert[:dnsname] = dns_raw.split(',')
+        when %r{^\s+eku: .*}
+          eku_raw = line.match(%r{eku: (.*)})[1]
+          current_cert[:eku] = eku_raw.split(',')
         when %r{^\s+ca-error: .*}
           current_cert[:ca_error] = line.match(%r{ca-error: (.*)})[1]
         when %r{^\s+pre-save command: .*}
@@ -164,6 +167,17 @@ Puppet::Type.type(:certmonger_certificate).provide :certmonger_certificate do
       dnsarray.each do |dnsname|
         request_args << '-D'
         request_args << dnsname
+      end
+    end
+    if resource[:eku]
+      ekuarray = if resource[:eku].is_a? String
+                   [resource[:eku]]
+                 else
+                   resource[:eku]
+                 end
+      ekuarray.each do |eku|
+        request_args << '-U'
+        request_args << eku
       end
     end
     if resource[:presave_cmd]

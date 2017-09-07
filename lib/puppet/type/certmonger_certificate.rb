@@ -119,6 +119,10 @@ Puppet::Type.newtype(:certmonger_certificate) do
     desc 'The DNS name used in the subjectAltNames for the certificate.'
   end
 
+  newproperty(:eku, array_matching: :all) do
+    desc 'The Extended Key Usage OID\'s names used for the certificate.'
+  end
+
   newproperty(:status) do
     desc "The certificate request's status."
   end
