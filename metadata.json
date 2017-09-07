@@ -10,7 +10,7 @@
   "description": "Certmonger puppet module for integration with IPA CAs",
   "tags": ["certmonger", "ipa", "ca","ipa-getcert","freeipa"],
   "dependencies": [
-    {"name":"puppetlabs/stdlib","version_requirement":">= 2.4.0 < 5.0.0"}
+    {"name":"puppetlabs/stdlib","version_requirement":">= 4.13.0 < 5.0.0"}
   ],
   "operatingsystem_support": [
     {

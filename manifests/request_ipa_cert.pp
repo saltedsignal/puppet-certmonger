@@ -1,64 +1,62 @@
-# define: certmonger::request_ipa_cert
+# == Define: certmonger::request_ipa_cert
+#
 # Request a new certificate from IPA (via certmonger) using a puppet define
 #
-# # Parameters:
-# * `certfile`    (required; String) - Full path of certificate to be managed by certmonger. e.g. `/path/to/certificate.crt`
-# * `keyfile`     (required; String) - Full path to private key file to be manaegd by certmonger. e.g. `/path/to/key.pem`
-# * `keysize`     (optional; String) - Generate keys with a specific keysize in bits. e.g. `4096`
-# * `hostname`    (optional; String) - Hostname to use (appears in subject field of cert). e.g. `webserver.example.com`
-# * `principal`   (optional; String) - IPA service principal certmonger should use when requesting cert.
-#                                      e.g. `HTTP/webserver.example.com`.
-# * `dns`         (optional; String or Array) - DNS subjectAltNames to be present in the certificate request.
-#                                      Can be a string (use commas or spaces to separate values) or an array.
-#                                      e.g. `ssl.example.com webserver01.example.com`
-#                                      e.g. `ssl.example.com, webserver01.example.com`
-#                                      e.g. `["ssl.example.com","webserver01.example.com"]`
-# * `eku`         (optional; String or Array) - Extended Key Usage attributes to be present in the certificate request.
-#                                      Can be a string (use commas or spaces to separate values) or an array.
-#                                      e.g. `id-kp-clientAuth id-kp-serverAuth`
-#                                      e.g. `id-kp-clientAuth, id-kp-serverAuth`
-#                                      e.g. `["id-kp-clientAuth","id-kp-serverAuth"]`
-# * `usage`       (optional; String or Array) - Key Usage attributes to be present in the certificate request.
-#                                      Can be a string (use commas or spaces to separate values) or an array.
-#                                      e.g. `digitalSignature nonRepudiation keyEncipherment`
-#                                      e.g. `digitalSignature, nonRepudiation, keyEncipherment`
-#                                      e.g. `["digitalSignature", "nonRepudiation", "keyEncipherment"]`
-# * `presavecmd`  (optional; String) - Command certmonger should run before saving the certificate
-# * `postsavecmd` (optional; String) - Command certmonger should run after saving the certificate
-# * `cacertfile`  (optional; String) - Ask certmonger to save the CA's certificate to this path. eg. `/path/to/ca.crt`
-# * `profile`     (optional; String) - Ask the CA to process request using the named profile. e.g. `caIPAserviceCert`
-# * `issuer`      (optional; String) - Ask the CA to process the request using the named issuer. e.g. `ca-puppet`
-# * `issuerdn`    (optional; String) - If a specific issuer is needed, provide the issuer DN. e.g. `CN=Puppet CA`
+# === Parameters
+#
+# $certfile::     Full path of certificate to be managed by certmonger. e.g. `/path/to/certificate.crt`
+# $keyfile::      Full path to private key file to be manaegd by certmonger. e.g. `/path/to/key.pem`
+# $keysize::      Generate keys with a specific keysize in bits. e.g. `4096`
+# $hostname::     Hostname to use (appears in subject field of cert). e.g. `webserver.example.com`
+# $principal::    IPA service principal certmonger should use when requesting cert.
+#                 e.g. `HTTP/webserver.example.com`.
+# $dns::          DNS subjectAltNames to be present in the certificate request.
+#                 Can be a string (use commas or spaces to separate values) or an array.
+#                 e.g. `ssl.example.com webserver01.example.com`
+#                 e.g. `ssl.example.com, webserver01.example.com`
+#                 e.g. `["ssl.example.com","webserver01.example.com"]`
+# $eku::          Extended Key Usage attributes to be present in the certificate request.
+#                 Can be a string (use commas or spaces to separate values) or an array.
+#                 e.g. `id-kp-clientAuth id-kp-serverAuth`
+#                 e.g. `id-kp-clientAuth, id-kp-serverAuth`
+#                 e.g. `["id-kp-clientAuth","id-kp-serverAuth"]`
+# $usage::        Key Usage attributes to be present in the certificate request.
+#                 Can be a string (use commas or spaces to separate values) or an array.
+#                 e.g. `digitalSignature nonRepudiation keyEncipherment`
+#                 e.g. `digitalSignature, nonRepudiation, keyEncipherment`
+#                 e.g. `["digitalSignature", "nonRepudiation", "keyEncipherment"]`
+# $presavecmd::   Command certmonger should run before saving the certificate
+# $postsavecmd::  Command certmonger should run after saving the certificate
+# $cacertfile::   Ask certmonger to save the CA's certificate to this path. eg. `/path/to/ca.crt`
+# $profile::      Ask the CA to process request using the named profile. e.g. `caIPAserviceCert`
+# $issuer::       Ask the CA to process the request using the named issuer. e.g. `ca-puppet`
+# $issuerdn::     If a specific issuer is needed, provide the issuer DN. e.g. `CN=Puppet CA`
 #
 define certmonger::request_ipa_cert (
-  $certfile,
-  $keyfile,
-  $keysize     = undef,
-  $hostname    = undef,
-  $principal   = undef,
-  $dns         = undef,
-  $eku         = undef,
-  $usage       = undef,
-  $presavecmd  = undef,
-  $postsavecmd = undef,
-  $profile     = undef,
-  $cacertfile  = undef,
-  $issuer      = undef,
-  $issuerdn    = undef,
+  Stdlib::Absolutepath                  $certfile,
+  Stdlib::Absolutepath                  $keyfile,
+  Variant[Integer[2048], String, Undef] $keysize     = undef,
+  Optional[String]                      $hostname    = undef,
+  Optional[String]                      $principal   = undef,
+  Variant[Array[String], String, Undef] $dns         = undef,
+  Variant[Array[String], String, Undef] $eku         = undef,
+  Variant[Array[String], String, Undef] $usage       = undef,
+  Optional[String]                      $presavecmd  = undef,
+  Optional[String]                      $postsavecmd = undef,
+  Optional[String]                      $profile     = undef,
+  Optional[Stdlib::Absolutepath]        $cacertfile  = undef,
+  Optional[String]                      $issuer      = undef,
+  Optional[String]                      $issuerdn    = undef,
 ) {
   include ::certmonger
   include ::certmonger::scripts
-
-  validate_string($certfile, $keyfile)
-  validate_absolute_path($certfile)
-  validate_absolute_path($keyfile)
 
   $options = "-f ${certfile} -k ${keyfile}"
   $options_certfile = "-f ${certfile}"
 
   if $keysize {
     $options_keysize = "-g ${keysize}"
-  else {
+  } else {
     $options_keysize = ''
   }
 
@@ -79,16 +77,14 @@ define certmonger::request_ipa_cert (
   }
 
   if $dns {
-    if is_array($dns) {
-      $options_dns_joined = join($dns, ' -D ')
-      $dns_csv = join($dns, ',')
-    } elsif is_string($dns) {
-      $dns_array = split(regsubst(strip($dns),'[ ,]+',','), ',')
-      $options_dns_joined = join($dns_array, ' -D ')
-      $dns_csv = join($dns_array, ',')
+    if $dns =~ String {
+      $dns_array = split(regsubst(strip($dns),'[ ,]+', ',', 'G'), ',')
     } else {
-      fail('certmonger::request_ipa_cert: dns parameter must be either a string or array.')
+      $dns_array = $dns
     }
+    $options_dns_joined = join($dns_array, ' -D ')
+    $dns_csv = join($dns_array, ',')
+
     $options_dns = regsubst($options_dns_joined, '^', '-D ')
     $options_dns_csv = "-D ${dns_csv}"
   } else {
@@ -97,16 +93,15 @@ define certmonger::request_ipa_cert (
   }
 
   if $usage {
-    if is_array($usage) {
-      $options_usage_joined = join($usage, ' -u ')
-      $usage_csv = join($usage, ',')
-    } elsif is_string($usage) {
-      $usage_array = split(regsubst(strip($usage),'[ ,]+',','), ',')
-      $options_usage_joined = join($usage_array, ' -u ')
-      $usage_csv = join($usage_array, ',')
+    if $usage =~ String {
+      $usage_array = split(regsubst(strip($usage),'[ ,]+', ',', 'G'), ',')
     } else {
-      fail('certmonger::request_ipa_cert: usage parameter must be either a string or array.')
+      $usage_array = $usage
     }
+
+    $options_usage_joined = join($usage_array, ' -u ')
+    $usage_csv = join($usage_array, ',')
+
     $options_usage = regsubst($options_usage_joined, '^', '-u ')
     $options_usage_csv = "-u ${usage_csv}"
   } else {
@@ -115,16 +110,15 @@ define certmonger::request_ipa_cert (
   }
 
   if $eku {
-    if is_array($eku) {
-      $options_eku_joined = join($eku, ' -U ')
-      $eku_csv = join($eku, ',')
-    } elsif is_string($eku) {
-      $eku_array = split(regsubst(strip($eku),'[ ,]+',','), ',')
-      $options_eku_joined = join($eku_array, ' -U ')
-      $eku_csv = join($eku_array, ',')
+    if $eku =~ String {
+      $eku_array = split(regsubst(strip($eku),'[ ,]+', ',', 'G'), ',')
     } else {
-      fail('certmonger::request_ipa_cert: eku parameter must be either a string or array.')
+      $eku_array = $eku
     }
+
+    $options_eku_joined = join($eku_array, ' -U ')
+    $eku_csv = join($eku_array, ',')
+
     $options_eku = regsubst($options_eku_joined, '^', '-U ')
     $options_eku_csv = "-U ${eku_csv}"
   } else {
