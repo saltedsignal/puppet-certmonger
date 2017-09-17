@@ -58,7 +58,7 @@ define certmonger::request_ipa_cert (
 
   if $keysize {
     $options_keysize = "-g ${keysize}"
-  else {
+  } else {
     $options_keysize = ''
   }
 
