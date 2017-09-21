@@ -152,6 +152,10 @@ Puppet::Type.newtype(:certmonger_certificate) do
     desc 'ask the CA to process the request using the named profile.'
   end
 
+  newparam(:cacertfile) do
+    desc 'Persist the CA certificate in a file in the given path.'
+  end
+
   newparam(:force_resubmit) do
     desc 'If the request is found, force a resubmit operation.'
     defaultto false

@@ -203,6 +203,10 @@ Puppet::Type.type(:certmonger_certificate).provide :certmonger_certificate do
       request_args << '-T'
       request_args << resource[:profile]
     end
+    if resource[:cacertfile]
+      request_args << '-F'
+      request_args << resource[:cacertfile]
+    end
     request_args
   end
 
