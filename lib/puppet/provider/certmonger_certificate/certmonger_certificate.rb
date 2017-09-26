@@ -1,3 +1,5 @@
+require 'ipaddr'
+
 Puppet::Type.type(:certmonger_certificate).provide :certmonger_certificate do
   desc 'Provider for certmonger certificates.'
 
@@ -165,8 +167,15 @@ Puppet::Type.type(:certmonger_certificate).provide :certmonger_certificate do
                    resource[:dnsname]
                  end
       dnsarray.each do |dnsname|
-        request_args << '-D'
-        request_args << dnsname
+        begin
+          # We just call this to see if it's a valid IP
+          IPAddr.new(dnsname)
+          request_args << '-A'
+          request_args << dnsname
+        rescue ArgumentError
+          request_args << '-D'
+          request_args << dnsname
+        end
       end
     end
     if resource[:eku]
