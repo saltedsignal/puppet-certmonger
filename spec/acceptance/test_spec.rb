@@ -18,4 +18,13 @@ EOS
     it { should be_enabled }
     it { should be_running }
   end
+  describe package('certmonger') do
+    it { is_expected.to be_installed }
+  end
+end
+
+describe 'run verify script' do
+    it 'runs verify script' do
+      shell("/tmp/.sh", :acceptable_exit_codes => [0])
+    end
 end
