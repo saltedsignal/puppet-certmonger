@@ -9,7 +9,7 @@
 # see: https://github.com/puppetlabs/beaker/blob/master/docs/how_to/hypervisors/ec2.md
 #
 HOSTS:
-  ubuntu-1604-x64:
+  centos-7-x86-64:
     roles:
       - master
     platform: centos-7-x86-64-west
