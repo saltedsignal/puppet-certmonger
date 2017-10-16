@@ -17,6 +17,10 @@ AMI:
     :image:
       :aio: ami-e4c63e8b
     :region: eu-central-1
+  centos-7-ap-southeast-2:
+    :image:
+      :aio: ami-e9c7208b
+    :region: ap-southeast-2
   # SUSE Linux Enterprise Server 12 SP2 (HVM), SSD Volume Type
   sles-12sp2-eu-central-1:
     :image:
