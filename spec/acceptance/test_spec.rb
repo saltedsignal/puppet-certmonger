@@ -23,8 +23,8 @@ EOS
   end
 end
 
-describe 'run verify script' do
-    it 'runs verify script' do
-      shell("/tmp/.sh", :acceptable_exit_codes => [0])
+describe 'verify script' do
+    it 'runs verify script without errors' do
+      shell("/tmp/verify_certmonger_request.sh", :acceptable_exit_codes => [0])
     end
 end

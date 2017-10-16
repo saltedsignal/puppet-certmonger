@@ -13,6 +13,9 @@ RSpec.configure do |c|
       copy_module_to(host, :source => proj_root, :module_name => 'certmonger')
       on host, puppet('module install puppetlabs-stdlib'),
         {:acceptable_exit_codes => [0]}
+      on(host, "apt-get -y install freeipa-server > /tmp/free-ipa-install-out")
+      scp_to(host, "#{proj_root}/files/verify_certmonger_request.sh", "/tmp/")
+      #on(host, "ipa-server-install -n example.local -r EXAMPLE.LOCAL -p vinodh87 -a vinodh87 --no-host-dns --no-ntp --unattended")
     end
   end
 end
