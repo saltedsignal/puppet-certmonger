@@ -12,16 +12,16 @@ HOSTS:
   ubuntu-1604-x64:
     roles:
       - master
-    platform: ubuntu-16.04-amd64
+    platform: centos-7-x86-64-west
     hypervisor: ec2
     # refers to image_tempaltes.yaml AMI[vmname] entry:
-    vmname: ubuntu-1604-eu-central-1
+    vmname: centos-7-ap-southeast-2
     # refers to image_tempaltes.yaml entry inside AMI[vmname][:image]:
     snapshot: aio
     # t2.micro is free tier eligible (https://aws.amazon.com/en/free/):
     amisize: t2.micro
     # required so that beaker sanitizes sshd_config and root authorized_keys:
-    user: ubuntu
+    user: centos
 CONFIG:
   type: aio
   :ec2_yaml: spec/acceptance/nodesets/ec2/image_templates.yaml
