@@ -14,8 +14,10 @@ RSpec.configure do |c|
       on host, puppet('module install puppetlabs-stdlib'),
         {:acceptable_exit_codes => [0]}
       scp_to(host, "#{proj_root}/files/verify_certmonger_request.sh", "/tmp/")
+      scp_to(host, "#{proj_root}/files/hostname.sh", "/tmp/")
       on(host, "sudo yum -y install ipa-server > /tmp/ipa-install-out")
-      on(host, "ipa-server-install -n example.local -r EXAMPLE.LOCAL -p vinodh87 -a vinodh87 --no-host-dns --no-ntp --unattended > /tmp/ipa-server-install-out")
+      on(host, "/tmp/hostname.sh")
+      on(host, "ipa-server-install --hostname=centos-7-x86-64.ap-southeast-2.compute.internal -n ap-southeast-2.compute.internal -r AP-SOUTHEAST-2.COMPUTE.INTERNAL -p vinodh87 -a vinodh87 --no-host-dns --no-ntp --unattended > /tmp/ipa-server-install-out")
     end
   end
 end
