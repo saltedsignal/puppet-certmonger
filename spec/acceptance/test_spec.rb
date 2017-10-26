@@ -69,9 +69,3 @@ EOS
       end
   end
 end
- 
-#describe 'verify script' do
-#    it 'runs verify script without errors' do
-#      shell("/tmp/verify_certmonger_request.sh", :acceptable_exit_codes => [0])
-#    end
-#end
