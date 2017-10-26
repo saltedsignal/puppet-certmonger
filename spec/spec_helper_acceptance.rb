@@ -17,6 +17,9 @@ RSpec.configure do |c|
       run_script_on(host, "#{proj_root}/files/hostname.sh")
       on(host, "sudo yum -y install ipa-server > /tmp/ipa-install-out")
       on(host, "ipa-server-install -v --hostname centos-7.local -n local -r LOCAL -p vinodh87 -a vinodh87 --no-host-dns --no-ntp --unattended > /tmp/ipa-server-install-out")
+      on(host, "ipa ca-add ca-puppet --subject=\"CN=Puppet CA,O=LOCAL\"")
+      on(host, "ipa caacl-mod hosts_services_caIPAserviceCert --cacat=all")
+      on(host, "setenforce 0")
     end
   end
 end
