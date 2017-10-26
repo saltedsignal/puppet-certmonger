@@ -40,7 +40,38 @@ EOS
     expect(@result.exit_code).to be_zero
   end
 end
-  
+
+describe 'certmonger::request_ipa_cert' do
+  let(:manifest){
+    <<-EOS
+certmonger::request_ipa_cert { many parameters:
+  certfile => "/tmp/server.crt",
+  keyfile  => "/tmp/server.key",
+  keysize     => 4096,
+  hostname    => 'myhost.example.com',
+  principal   => 'HTTP/myhost.example.com',
+  dns         => ['www.example.com', 'myhost.example.com'],
+  eku         => ['id-kp-clientAuth', 'id-kp-serverAuth'],
+  usage       => ['digitalSignature', 'nonRepudiation', 'keyEncipherment'],
+  presavecmd  => '/bin/systemctl stop httpd',
+  postsavecmd => '/bin/systemctl start httpd',
+  cacertfile  => '/path/to/ca.crt',
+  profile     => 'caIPAserviceCert',
+  issuer      => 'ca-puppet',
+  issuerdn    => 'CA=Puppet CA',
+}
+EOS
+}
+  it 'should apply without errors' do
+    apply_manifest(manifest, :catch_failures => true)
+  end
+  it 'should apply a second time without changes' do
+    @result = apply_manifest(manifest)
+    expect(@result.exit_code).to be_zero
+  end
+end
+ 
+ 
 #describe 'verify script' do
 #    it 'runs verify script without errors' do
 #      shell("/tmp/verify_certmonger_request.sh", :acceptable_exit_codes => [0])
