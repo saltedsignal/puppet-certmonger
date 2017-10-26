@@ -27,8 +27,8 @@ describe 'certmonger::request_ipa_cert' do
   let(:manifest){
     <<-EOS
 certmonger::request_ipa_cert { request:
-  certfile => "/tmp/server.crt"
-  keyfile  => "/tmp/server.key"
+  certfile => "/tmp/server.crt",
+  keyfile  => "/tmp/server.key",
 }
 EOS
   }
