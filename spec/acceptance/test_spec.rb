@@ -44,19 +44,14 @@ end
 describe 'certmonger::request_ipa_cert' do
   let(:manifest){
     <<-EOS
-certmonger::request_ipa_cert { many parameters:
-  certfile => "/tmp/server.crt",
-  keyfile  => "/tmp/server.key",
+certmonger::request_ipa_cert { manyparameters:
+  certfile    => "/tmp/server.crt",
+  keyfile     => "/tmp/server.key",
   keysize     => 4096,
-  hostname    => 'myhost.example.com',
-  principal   => 'HTTP/myhost.example.com',
-  dns         => ['www.example.com', 'myhost.example.com'],
-  eku         => ['id-kp-clientAuth', 'id-kp-serverAuth'],
-  usage       => ['digitalSignature', 'nonRepudiation', 'keyEncipherment'],
+  hostname    => 'centos-7.local',
+  principal   => 'HTTP/centos-7.local',
   presavecmd  => '/bin/systemctl stop httpd',
   postsavecmd => '/bin/systemctl start httpd',
-  cacertfile  => '/path/to/ca.crt',
-  profile     => 'caIPAserviceCert',
   issuer      => 'ca-puppet',
   issuerdn    => 'CA=Puppet CA',
 }
