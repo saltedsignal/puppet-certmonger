@@ -19,7 +19,7 @@ HOSTS:
     # refers to image_tempaltes.yaml entry inside AMI[vmname][:image]:
     snapshot: aio
     # t2.micro is free tier eligible (https://aws.amazon.com/en/free/):
-    amisize: t2.micro
+    amisize: t2.medium
     # required so that beaker sanitizes sshd_config and root authorized_keys:
     user: centos
 CONFIG:

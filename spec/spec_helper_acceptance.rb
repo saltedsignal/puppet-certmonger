@@ -15,8 +15,8 @@ RSpec.configure do |c|
         {:acceptable_exit_codes => [0]}
       scp_to(host, "#{proj_root}/files/verify_certmonger_request.sh", "/tmp/")
       run_script_on(host, "#{proj_root}/files/hostname.sh")
-      #on(host, "sudo yum -y install ipa-server > /tmp/ipa-install-out")
-      #on(host, "ipa-server-install --hostname=centos-7-x86-64.ap-southeast-2.compute.internal -n ap-southeast-2.compute.internal -r AP-SOUTHEAST-2.COMPUTE.INTERNAL -p vinodh87 -a vinodh87 --no-host-dns --no-ntp --unattended > /tmp/ipa-server-install-out")
+      on(host, "sudo yum -y install ipa-server > /tmp/ipa-install-out")
+      on(host, "ipa-server-install -v --hostname centos-7.local -n local -r LOCAL -p vinodh87 -a vinodh87 --no-host-dns --no-ntp --unattended > /tmp/ipa-server-install-out")
     end
   end
 end
