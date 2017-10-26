@@ -51,7 +51,7 @@ certmonger::request_ipa_cert { manyparameters:
   hostname    => 'centos-7.local',
   presavecmd  => '/bin/systemctl stop httpd',
   postsavecmd => '/bin/systemctl start httpd',
-  issuer      => 'ca-puppet'
+  issuer      => 'ca-puppet',
   issuerdn    => 'CA=Puppet CA',
 }
 EOS
