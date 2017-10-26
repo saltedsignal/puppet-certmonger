@@ -49,7 +49,6 @@ certmonger::request_ipa_cert { manyparameters:
   keyfile     => "/tmp/server.key",
   keysize     => 4096,
   hostname    => 'centos-7.local',
-  principal   => 'HTTP/centos-7.local',
   presavecmd  => '/bin/systemctl stop httpd',
   postsavecmd => '/bin/systemctl start httpd',
   issuer      => 'ca-puppet',
