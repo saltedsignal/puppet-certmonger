@@ -52,16 +52,21 @@ certmonger::request_ipa_cert { manyparameters:
   presavecmd  => '/bin/systemctl stop httpd',
   postsavecmd => '/bin/systemctl start httpd',
   issuer      => 'ca-puppet',
-  issuerdn    => 'CA=Puppet CA',
+  issuerdn    => 'CN=Puppet CA,O=LOCAL',
 }
 EOS
-}
+  }
   it 'should apply without errors' do
     apply_manifest(manifest, :catch_failures => true)
   end
   it 'should apply a second time without changes' do
     @result = apply_manifest(manifest)
     expect(@result.exit_code).to be_zero
+  end
+  describe 'validate script' do
+      it 'runs validate script without errors' do
+        shell("/tmp/validate_script.sh", :acceptable_exit_codes => [0])
+      end
   end
 end
  
