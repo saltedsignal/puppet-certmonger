@@ -381,5 +381,21 @@ describe Puppet::Type.type(:certmonger_certificate) do
         end.not_to raise_error
       end
     end
+
+    describe :issuer do
+      it 'has an issuer property' do
+        expect(
+          Puppet::Type.type(:certmonger_certificate).attrtype(:issuer)
+        ).to eq(:property)
+      end
+      it 'validates and pass if valid value' do
+        expect do
+          Puppet::Type.type(:certmonger_certificate).new(
+            name: name, ensure: :present, issuer: 'some_value'
+          )
+        end.not_to raise_error
+      end
+    end
+
   end
 end
