@@ -75,6 +75,16 @@ Puppet::Type.type(:certmonger_certificate).provide :certmonger_certificate do
             cn_match = line.match(%r{subject: .*CN=(.*?)(?:,.*|$)})
             current_cert[:hostname] = cn_match[1]
           end
+        when %r{^\s+issuer: .*}
+          # FIXME(owalsh): This is also hacky! Use an actual library to parse
+          # the issuer DN.
+          subj_match = line.match(%r{issuer: (.*)})
+          if subj_match[1].empty?
+            current_cert[:issuer] = ''
+          else
+            cn_match = line.match(%r{issuer: .*CN=(.*?)(?:,.*|$)})
+            current_cert[:issuer] = cn_match[1]
+          end
         when %r{^\s+dns: .*}
           dns_raw = line.match(%r{dns: (.*)})[1]
           current_cert[:dnsname] = dns_raw.split(',')
@@ -196,6 +206,10 @@ Puppet::Type.type(:certmonger_certificate).provide :certmonger_certificate do
     if resource[:postsave_cmd]
       request_args << '-C'
       request_args << "\"#{resource[:postsave_cmd]}\""
+    end
+    if resource[:issuer]
+      request_args << '-X'
+      request_args << resource[:issuer]
     end
 
     request_args << '-w' if resource[:wait]

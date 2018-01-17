@@ -107,6 +107,10 @@ Puppet::Type.newtype(:certmonger_certificate) do
     end
   end
 
+  newproperty(:issuer) do
+    desc 'The issuer name from which the certificate was requested.'
+  end
+
   newproperty(:hostname) do
     desc 'The hostname used in the CN for the certificate.'
   end
