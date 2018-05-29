@@ -12,6 +12,7 @@ class certmonger(
       ensure => running,
       enable => true,
       restart => '',
+      notify => Service['certmonger'],
     }
   }
 
