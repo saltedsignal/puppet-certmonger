@@ -11,7 +11,8 @@ class certmonger(
     service { 'dbus':
       ensure => running,
       enable => true,
-      restart => '',
+      hasstatus => true,
+      hasrestart => true,
       notify => Service['certmonger'],
     }
   }
