@@ -157,7 +157,8 @@ Puppet::Type.newtype(:certmonger_certificate) do
   end
 
   newparam(:force_resubmit) do
-    desc 'If the request is found, force a resubmit operation.'
+    desc 'If the request is found, force a resubmit operation. (currently ' \
+         'not used)'
     defaultto false
     newvalues(true, false)
   end

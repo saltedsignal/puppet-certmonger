@@ -118,11 +118,9 @@ Puppet::Type.type(:certmonger_certificate).provide :certmonger_certificate do
       getcert(['stop-tracking', '-i', resource[:name]])
     else
       if !@property_hash.empty?
-        if resource[:force_resubmit]
-          request_args = ['resubmit', '-i', resource[:name]]
-          request_args.concat get_base_args(resource)
-          getcert request_args
-        end
+        request_args = ['resubmit', '-i', resource[:name]]
+        request_args.concat get_base_args(resource)
+        getcert request_args
       else
         request_args = ['request', '-I', resource[:name]]
         request_args.concat get_base_args(resource)
