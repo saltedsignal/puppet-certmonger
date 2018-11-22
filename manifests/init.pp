@@ -3,8 +3,8 @@ class certmonger {
 
   package { 'certmonger':
     ensure => 'present',
-  } ->
-  service { 'certmonger':
+  }
+  -> service { 'certmonger':
     ensure => 'running',
     enable => true,
   }

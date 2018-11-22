@@ -1,15 +1,10 @@
-branches:
-script: "bundle exec rake spec SPEC_OPTS='--format documentation'"
-bundler_args: --without development
+sudo: false
 
-rvm:
-- 2.0.0
-- 2.2.3
 env:
   matrix:
-    - PUPPET_GEM_VERSION="~> 4.5.0"
-    - PUPPET_GEM_VERSION="~> 4.6.0"
-    - PUPPET_GEM_VERSION="~> 4.7.0"
-    - PUPPET_GEM_VERSION="~> 4.8.0"
-    - PUPPET_GEM_VERSION="~> 4.9.0"
-
+    - rvm: 2.1.9
+      env: PUPPET_VERSION=4.9
+    - rvm: 2.4.1
+      env: PUPPET_VERSION=5.0
+    - rvm: 2.5.1
+      env: PUPPET_VERSION=6.0
