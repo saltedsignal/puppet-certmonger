@@ -1,4 +1,5 @@
 require 'ipaddr'
+require 'puppet/util/retryaction'
 
 Puppet::Type.type(:certmonger_certificate).provide :certmonger_certificate do
   desc 'Provider for certmonger certificates.'
@@ -131,6 +132,15 @@ Puppet::Type.type(:certmonger_certificate).provide :certmonger_certificate do
           getcert request_args
         rescue Puppet::ExecutionFailure => msg
           Puppet.warning("Could not get certificate: #{msg}")
+
+          retry_args = ['resubmit', '-i', resource[:name]]
+          retry_args.concat get_base_args(resource)
+
+          # Attempt 3 more times, in case there is an issue. Might have been an
+          # intermittent network issue, a collision in LDAP, or something else.
+          Puppet::Util::RetryAction.retry_action :retries => 3, :retry_exceptions => {Puppet::ExecutionFailure => 'Error requesting certificate.  Retrying'} do
+            getcert retry_args
+          end
         end
 
       end
