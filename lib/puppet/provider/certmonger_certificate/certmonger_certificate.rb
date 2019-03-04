@@ -1,5 +1,5 @@
 require 'ipaddr'
-require 'puppet/util/retryaction'
+require 'puppet/util/retry_action'
 
 Puppet::Type.type(:certmonger_certificate).provide :certmonger_certificate do
   desc 'Provider for certmonger certificates.'
