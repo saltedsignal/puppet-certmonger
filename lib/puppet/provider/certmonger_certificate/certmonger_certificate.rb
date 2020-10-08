@@ -89,6 +89,8 @@ Puppet::Type.type(:certmonger_certificate).provide :certmonger_certificate do
           current_cert[:postsave_cmd] = line.match(
             %r{post-save command: (.*)}
           )[1]
+        when %r{^\s+key_size: .*}
+          current_cert[:key_size] = line.match(%r{key_size: (.*)})[1]
         end
       end
     end
@@ -194,6 +196,10 @@ Puppet::Type.type(:certmonger_certificate).provide :certmonger_certificate do
     if resource[:postsave_cmd]
       request_args << '-C'
       request_args << "#{resource[:postsave_cmd]}"
+    end
+    if resource[:key_size]
+      request_args << '-g'
+      request_args << "#{resource[:key_size]}"
     end
 
     request_args << '-w' if resource[:wait]
