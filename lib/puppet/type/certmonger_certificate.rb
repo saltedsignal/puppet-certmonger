@@ -143,6 +143,11 @@ Puppet::Type.newtype(:certmonger_certificate) do
     desc 'A command that will be issued after storing the certificate.'
   end
 
+  newproperty(:key_size) do
+    desc 'Size for the key used to generate the certificate.'
+    defaultto '2048'
+  end
+
   newproperty(:ca_error) do
     desc 'The error info provided in case the CA reported an error with ' \
           'the request.'

@@ -42,6 +42,7 @@ Note: there is no need to use the `certmonger` class, it gets included by the de
                                      e.g. `["digitalSignature", "nonRepudiation", "keyEncipherment"]`
 * `presavecmd`  (optional; String) - Command certmonger should run before saving the certificate
 * `postsavecmd` (optional; String) - Command certmonger should run after saving the certificate
+* `key_size`    (optional; String) - Size for the key used to generate the certificate
 * `cacertfile`  (optional; String) - Ask certmonger to save the CA's certificate to this path. eg. `/path/to/ca.crt`
 * `profile`     (optional; String) - Ask the CA to process request using the named profile. e.g. `caIPAserviceCert`
 * `issuer`      (optional; String) - Ask the CA to process the request using the named issuer. e.g. `ca-puppet`
@@ -119,7 +120,7 @@ specified by 'keyfile'. And if it succeeds it will track the certificate where
     ca        => 'IPA'
     certfile  => '/path/to/certs/my-cert.pem',
     keyfile   => '/path/to/certs/my-key.pem',
-    keysize   => '3076',
+    key_size   => '3076',
     hostname  => 'hostname.example.com'
     principal => 'HTTP/hostname.example.com',
   }
@@ -141,7 +142,7 @@ viewing the resource, you'll see the following:
     ca          => 'local'
     certbackend => 'FILE',
     certfile    => '/path/to/certs/my-cert.pem',
-    keysize     => 'KEY_SIZE_VALUE',
+    key_size     => 'KEY_SIZE_VALUE',
     keybackend  => 'FILE',
     keyfile     => '/path/to/certs/my-key.pem',
     status      => 'CA_REJECTED',

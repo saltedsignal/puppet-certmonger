@@ -352,6 +352,21 @@ describe Puppet::Type.type(:certmonger_certificate) do
       end
     end
 
+    describe :key_size do
+      it 'has a key_size property' do
+        expect(
+          Puppet::Type.type(:certmonger_certificate).attrtype(:key_size)
+        ).to eq(:property)
+      end
+      it 'validates and pass if valid value' do
+        expect do
+          Puppet::Type.type(:certmonger_certificate).new(
+            name: name, ensure: :present, key_size: 'some_value'
+          )
+        end.not_to raise_error
+      end
+    end
+
     describe :ca_error do
       it 'has a ca_error property' do
         expect(
