@@ -120,7 +120,7 @@ specified by 'keyfile'. And if it succeeds it will track the certificate where
     ca        => 'IPA'
     certfile  => '/path/to/certs/my-cert.pem',
     keyfile   => '/path/to/certs/my-key.pem',
-    key_size   => '3076',
+    key_size  => '3076',
     hostname  => 'hostname.example.com'
     principal => 'HTTP/hostname.example.com',
   }
@@ -142,7 +142,7 @@ viewing the resource, you'll see the following:
     ca          => 'local'
     certbackend => 'FILE',
     certfile    => '/path/to/certs/my-cert.pem',
-    key_size     => 'KEY_SIZE_VALUE',
+    key_size    => 'KEY_SIZE_VALUE',
     keybackend  => 'FILE',
     keyfile     => '/path/to/certs/my-key.pem',
     status      => 'CA_REJECTED',
