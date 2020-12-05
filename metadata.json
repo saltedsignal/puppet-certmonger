@@ -1,16 +1,17 @@
 {
   "name": "saltedsignal-certmonger",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "author": "saltedsignal",
   "summary": "Certmonger puppet module",
   "license": "Apache-2.0",
   "source": "https://github.com/saltedsignal/puppet-certmonger",
   "project_page": "https://github.com/saltedsignal/puppet-certmonger",
   "issues_url": "https://github.com/saltedsignal/puppet-certmonger/issues",
-  "description": "Certmonger puppet module for integration with IPA CAs",
-  "tags": ["certmonger", "ipa", "ca","ipa-getcert","freeipa"],
   "dependencies": [
-    {"name":"puppetlabs/stdlib","version_requirement":">= 4.13.0 < 6.0.0"}
+    {
+      "name": "puppetlabs/stdlib",
+      "version_requirement": ">= 4.13.0 < 6.0.0"
+    }
   ],
   "operatingsystem_support": [
     {
@@ -33,5 +34,16 @@
       "name": "puppet",
       "version_requirement": ">=4.5.0 <7.0.0"
     }
-  ]
+  ],
+  "description": "Certmonger puppet module for integration with IPA CAs",
+  "tags": [
+    "certmonger",
+    "ipa",
+    "ca",
+    "ipa-getcert",
+    "freeipa"
+  ],
+  "pdk-version": "1.18.1",
+  "template-url": "pdk-default#1.18.1",
+  "template-ref": "tags/1.18.1-0-g3d2e75c"
 }
