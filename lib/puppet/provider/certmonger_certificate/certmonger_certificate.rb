@@ -78,6 +78,8 @@ Puppet::Type.type(:certmonger_certificate).provide :certmonger_certificate do
         when %r{^\s+dns: .*}
           dns_raw = line.match(%r{dns: (.*)})[1]
           current_cert[:dnsname] = dns_raw.split(',')
+        when %r{^\s+principal name: .*}
+          current_cert[:principal] = line.match(%r{name: (.*)$})[1]
         when %r{^\s+eku: .*}
           eku_raw = line.match(%r{eku: (.*)})[1]
           current_cert[:eku] = eku_raw.split(',')
