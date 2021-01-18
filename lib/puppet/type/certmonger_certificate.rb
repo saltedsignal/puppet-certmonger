@@ -185,4 +185,8 @@ Puppet::Type.newtype(:certmonger_certificate) do
     defaultto false
     newvalues(true, false)
   end
+
+  def refresh
+    provider.flush()
+  end
 end
