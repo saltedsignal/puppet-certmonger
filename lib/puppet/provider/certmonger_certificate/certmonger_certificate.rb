@@ -199,10 +199,6 @@ Puppet::Type.type(:certmonger_certificate).provide :certmonger_certificate do
       request_args << '-C'
       request_args << "#{resource[:postsave_cmd]}"
     end
-    if resource[:key_size]
-      request_args << '-g'
-      request_args << "#{resource[:key_size]}"
-    end
 
     request_args << '-w' if resource[:wait]
     request_args
@@ -222,6 +218,11 @@ Puppet::Type.type(:certmonger_certificate).provide :certmonger_certificate do
       request_args << '-F'
       request_args << resource[:cacertfile]
     end
+    if resource[:key_size]
+      request_args << '-g'
+      request_args << "#{resource[:key_size]}"
+    end
+
     request_args
   end
 
