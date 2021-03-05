@@ -57,8 +57,13 @@ Puppet::Type.type(:certmonger_certificate).provide :certmonger_certificate do
           current_cert[:status] = line.match(%r{status: (.+)})[1]
         when %r{^\s+key pair storage: .*}
           key_match = line.match(%r{type=([A-Z]+),.*location='(.+?)'})
-          current_cert[:keybackend] = key_match[1]
-          current_cert[:keyfile] = key_match[2]
+          if key_match
+            current_cert[:keybackend] = key_match[1]
+            current_cert[:keyfile] = key_match[2]
+          else
+            current_cert[:keybackend] = 'NONE'
+            current_cert[:keyfile] = ''
+          end
         when %r{^\s+certificate: .*}
           cert_match = line.match(%r{type=([A-Z]+),.*location='(.+?)'})
           current_cert[:certbackend] = cert_match[1]
